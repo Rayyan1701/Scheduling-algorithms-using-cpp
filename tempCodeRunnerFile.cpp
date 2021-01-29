@@ -1,7 +1,3 @@
-#include <iostream>
-#include <queue>
-using namespace std;
-int n;
 int  q;
 class rr_process
 {
@@ -237,27 +233,3 @@ ostream &operator<<(ostream &out, rr_process* q)
 float rr_process::Avg_TAT=0;
 float rr_process::Avg_WT=0;
 
-
-int main()
-{
-
-    // rr_process *first = NULL, *last = NULL;
-    rr_process obj[10];
-    
-    cout << "Enter number of processes" << endl;
-    cin >> n;
-    cout << "Enter time quantumn" << endl;
-    cin >> q;
-    for (int i = 0; i < n; i++)
-    {
-        cout << "Process " << i + 1 << ":" << endl;
-        obj[i].read();
-    }
-
-    obj[0].arrange_arrival();
-    obj[0].calculate_CT();
-    obj[0].calculate_TAT_WT();
-    cout<<obj;
-    //obj[0].display(n);
-    rr_process::roundrobin_display_average_TAT_WT();
-}
