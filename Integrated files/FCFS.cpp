@@ -1,7 +1,8 @@
 #include <iostream>
 using namespace std;
 int n;
-class FCFS_Process: public process
+
+class FCFS_Process
 {
 	int FCFS_process_id;
 	int arrival_time;

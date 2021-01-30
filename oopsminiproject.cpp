@@ -7,11 +7,14 @@ class process
 {
     public:
     virtual void calculate_CT()=0;
+    virtual void arrange_arrival()=0;
+    virtual void calculate_TAT_WT()=0;
+    virtual void display()=0;
     
 };
 
 
-int n;
+
 
 //FCFS
 
@@ -27,13 +30,13 @@ class FCFS_Process: public process
 	static float Avg_WT;
 
 public:
-	FCFS_Process()
+    FCFS_Process(int id=0,int bt=0,int ct=0,int tat=0,int wt=0)
 	{
-		FCFS_process_id = 0;
-		burst_time = 0;
-		completion_time = 0;
-		TAT = 0;
-		wait_time = 0;
+		FCFS_process_id = id;
+		burst_time = bt;
+		completion_time = ct;
+		TAT = tat;
+		wait_time = wt;
 	}
 	~FCFS_Process() {}
 	void arrange_arrival()
@@ -140,7 +143,7 @@ public:
 
     friend ostream& operator<<(ostream& out, FCFS_Process* obj);
 	friend istream& operator>>(istream& in, FCFS_Process obj);
-     friend void read(process** p);
+     friend void read(process **p);
 };
 
 float FCFS_Process::Avg_TAT = 0;
@@ -391,7 +394,7 @@ public:
     
 
     friend ostream &operator<<(ostream &out, rr_process* q);
-    friend void read(process** p);
+    friend void read(process **p);
     
 };
 ostream &operator<<(ostream &out, rr_process* q)
@@ -432,16 +435,16 @@ class sjf_process: public process
         void arrange_arrival();
         void calculate_CT();
         void get_sjf_process();
-        //void display();
+        void calculate_TAT_WT()
+        {
+
+        }
+
+        void display();
         friend ostream &operator<<(ostream &out,sjf_process obj);
-        friend void read(process** p);
+        friend void read(process **p);
 };
-void swap(int *a,int *b)
-{
-    int temp=*a;
-    *a=*b;
-    *b=temp;
-}
+
 void sjf_process::arrange_arrival()
 { 
     for(int i=0; i<n; i++) 
@@ -509,7 +512,7 @@ void sjf_process::get_sjf_process()
     // this->arrange_arrival(mat);
     // this->completion_time(mat);
 }
-/*void sjf_process::display()
+void sjf_process::display()
 {
     cout<<"Final Result...\n"; 
     cout<<"sjf_Process ID\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n"; 
@@ -517,7 +520,7 @@ void sjf_process::get_sjf_process()
     { 
         cout<<mat[i][0]<<"\t\t"<<mat[i][1]<<"\t\t"<<mat[i][2]<<"\t\t"<<mat[i][4]<<"\t\t"<<mat[i][5]<<"\n"; 
     } 
-}*/
+}
 ostream &operator<<(ostream &out,sjf_process obj)
 {
     cout<<"Final Result...\n"; 
@@ -538,12 +541,20 @@ class priority: public process
     int bt[20],p[20],wt[20],tat[20],pr[20];
     public:
         void calculate_CT();
-        //void display();
+        void display();
         void get_process();
 
         friend ostream& operator<<(ostream &out,priority obj);
         friend istream& operator>>(istream &in,priority obj);
-        friend void read(process** p);
+        friend void read(process **p);
+        void arrange_arrival()
+        {
+
+        }
+        void calculate_TAT_WT()
+        {
+            
+        }
 };
 void swap(int *x,int *y)
 {
@@ -581,7 +592,7 @@ void priority::get_process()
         p[i]=i+1;           
     }
 }
-/*void priority::display()
+void priority::display()
 {
     float avg_wt,avg_tat,total;
     for(i=1;i<n;i++)
@@ -605,7 +616,7 @@ void priority::get_process()
     avg_tat=total/n;     
     cout<<"\n\nAverage Waiting Time="<<avg_wt;
     cout<<"\nAverage Turnaround Time="<<avg_tat;
-}*/
+}
 ostream &operator<<(ostream &out,priority obj)
 {
     float avg_wt,avg_tat,total;
@@ -633,10 +644,51 @@ ostream &operator<<(ostream &out,priority obj)
     return out;
 }
 
-
-void read(process** p)
+int id,at,bt,pr;
+void read(process **p)
 {
+    
+    FCFS_Process fcfs[10];
+    rr_process rr[10];
+    sjf_process sjf;
+    priority prio;
+      for (int i = 0; i < n; i++)
+      {
+            cout << "Enter Process ID   :";
+        cin >> id;
+        sjf.mat[i][0]=id;
+        rr[i].process_id=id;
+        fcfs[i].FCFS_process_id=id;
+        prio.p[i]=i+1;
+       
+        cout << "Enter Arrival time :";
+        cin >> at;
+        fcfs[i].arrival_time=at;
+        rr[i].arrival_time=at;
+        sjf.mat[i][1]=at;
+        
+        
+        cout << "Enter Burst time   :";
+        cin >> bt;
+        fcfs[i].burst_time=bt;
+        rr[i].burst_time=bt;
+        sjf.mat[i][2]=bt;
+        prio.bt[i]=bt;
+       
+        cout<<"Enter priority  :";
+        cin>>prio.pr[i];
+        
 
+      }
+      
+        
+       p[0]=fcfs;
+    p[1]=rr;
+    p[2]=&sjf;
+    p[3]=&prio;
+       
+        
+       
 
 
 }
@@ -648,15 +700,9 @@ void read(process** p)
 int main()
 {
     process *p[4];
-    FCFS_Process fcfs[10];
-    rr_process rr[10];
-    sjf_process sjf;
-    priority prio;
+    
 
-    p[0]=fcfs;
-    p[1]=rr;
-    p[2]=&sjf;
-    p[3]=&prio;
+    
 
     cout<<"Enter the number of processes"<<endl;
     cin>>n;
@@ -664,12 +710,30 @@ int main()
     cout<<"Enter the time quantumn for Round robin algorithm"<<endl;
     cin>>q;
 
-    cout<<"Enter "<<endl;
+    cout<<"Enter the process parameters "<<endl;
 
     read(p);
 
+   for (int i = 0; i < n; i++)
+   {
+        p[i]->arrange_arrival();
+   }
 
-    
+   for (int i = 0; i < n; i++)
+   {
+        p[i]->calculate_CT();
+   }
+
+   for (int i = 0; i < 2; i++)
+   {
+       p[i]->calculate_TAT_WT();
+   }
+   cout<<"The final results are:-"<<endl;
+   for (int i = 0; i < n; i++)
+   {
+       p[i]->display();
+   }
+ 
 }
 
 
